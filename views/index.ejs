@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+	<meta charset = "utf-8"/>
+	<title>draw</title>
+<!-- ////////////////////////////////////////////////////////// -->
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type = 'text/javascript' src = '/socket.io/socket.io.js'></script>
+	<script type="text/javascript" src="js/paper.js"></script>
+	<script type="text/javascript" src="js/jscolor/jscolor.js"></script>
+
+	<!-- Define inlined PaperScript associate it with myCanvas -->
+
+
+<!-- ////////////////////////////////////////////////////////// -->
+	<link rel = "stylesheet" href = "/css/style.css">
+
+</head>
+<body>
+
+	<h2>Drawing with Socket.IO</h2>
+
+	<canvas id="myCanvas" resize></canvas>
+	<input class="color" id="color">
+	<input type="range" id="range" min="1" max="20" value="2">
+	<input type="button" id="eraser" value="eraser">
+	<input type="button" id="clear" value="clear screen">
+
+
+</body>
+	<script type="text/paperscript" canvas="myCanvas">
+
+
+	//setting up variables
+	var socket = io.connect();
+	var myPath;
+	var picked_color;
+	var picked_width;
+	$("#color").val('000000')
+	var currentMode = "drawing";
+	
+
+	
+
+
+	
+
+	//setting up initial conditions
+	if(currentMode == "drawing"){
+		$('#myCanvas').css('cursor', 'url(/img/pen.png),auto');
+	}
+
+	$("#color").click(function(){
+		currentMode="drawing";
+		$('#myCanvas').css('cursor', 'url(/img/pen.png),auto');
+	})
+
+	$("#eraser").click(function(){
+		currentMode="erasing";
+		$('#myCanvas').css('cursor', 'url(/img/eraser.png),auto');
+	})
+
+
+
+
+
+
+
+
+
+
+	//listening for events
+    socket.on("gotClear", function(clear){
+    	project.clear();
+    	paper.view.update();
+    });
+
+    socket.on('gotMouseDown', function(color, width, mode){
+    	myPath = new Path();
+    	myPath.strokeCap = 'round';
+    	myPath.strokeJoin = 'round';
+    	myPath.strokeWidth = width;
+    	myPath.strokeColor = '#' + color;
+    	if(mode == "erasing"){
+    		$('#myCanvas').css('cursor', 'url(/img/eraser.png),auto');
+    	}
+    	if(mode == "drawing"){
+    		$('#myCanvas').css('cursor', 'url(/img/pen.png),auto');
+    	}
+    });
+
+    socket.on('gotMouseDrag', function(data){
+    	myPath.add({x: data[1], y: data[2]});
+    	paper.view.update();
+    });
+
+    socket.on("gotSerial", function(ser){
+    	// console.log(ser)
+    	var raster = new Raster(ser, view.center);
+    	
+    })
+
+    socket.on("gotLoad", function(){
+    	var serial = $("#myCanvas")[0].toDataURL();
+    	socket.emit("onSerial", serial);
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //emitting event
+    socket.emit("onPreload");
+
+	$("#clear").click(function(){
+		socket.emit("clearingScreen");
+	})
+
+	function onMouseDown(event){
+		if(currentMode == "drawing"){
+			picked_color = $("#color").val();
+			picked_width = $("#range").val();
+		}
+		if(currentMode == "erasing"){
+			picked_color = "FFFFFF";
+			picked_width = $("#range").val();
+		}
+
+		socket.emit("onMouseDown", picked_color, picked_width, currentMode);
+	}
+
+	function onMouseDrag(event){
+		socket.emit("onMouseDrag", event.point);
+	}
+
+
+
+
+
+	</script>
+</html>
