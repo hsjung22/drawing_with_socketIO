@@ -16,9 +16,7 @@ app.get('/',function (req ,res) {
 
 
 
-var server = app.listen(8000, function () {
-	console.log("listening on port 8000");
-})
+var server = app.listen(parseInt(process.env.PORT || 8000));
 var io = require('socket.io').listen(server);
 
 
