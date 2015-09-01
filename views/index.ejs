@@ -2,50 +2,115 @@
 <html lang = "en">
 <head>
 	<meta charset = "utf-8"/>
-	<title>draw</title>
+	<title>Drawing Room</title>
 <!-- ////////////////////////////////////////////////////////// -->
-
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="/js/jquery.js"></script>
 	<script type = 'text/javascript' src = '/socket.io/socket.io.js'></script>
 	<script type="text/javascript" src="js/paper.js"></script>
 	<script type="text/javascript" src="js/jscolor/jscolor.js"></script>
+	<script src="js/alertify.js"></script>
+	<script src="js/lettering.min.js"></script>
 
 	<!-- Define inlined PaperScript associate it with myCanvas -->
 
 
 <!-- ////////////////////////////////////////////////////////// -->
-	<link rel = "stylesheet" href = "/css/style.css">
+	<link href='https://fonts.googleapis.com/css?family=Luckiest+Guy' rel='stylesheet' type='text/css'>
+	<link rel="shortcut icon" href="img/draw.png">
+	<link rel = "stylesheet" href = "css/bootstrap.css">
+	<link rel="stylesheet" href="css/alertify.core.css" />
+	<link rel="stylesheet" href="css/alertify.default.css" />
+	<link rel = "stylesheet" href = "css/style.css">
 
 </head>
 <body>
+	<div class="container">
+		<div class="row top15">
+			<h1 id="title" class= "text-center">Drawing-Together</h1>
+		</div>
 
-	<h2>Drawing with Socket.IO</h2>
-
-	<canvas id="myCanvas" resize></canvas>
-	<input class="color" id="color">
-	<input type="range" id="range" min="1" max="20" value="2">
-	<input type="button" id="eraser" value="eraser">
-	<input type="button" id="clear" value="clear screen">
+		<div class="row top15">
+			<div class="col-md-3 col-md-offset-2">
+				<input class="color" id="color">
+				<input type="range" id="range" min="1" max="20" value="2">
+			</div>
+				<button id="eraser" class="btn btn-default"><img src="img/eraser.png" alt="eraser"></button>
+				<button id="clear" class="btn btn-default"><img src="img/recycle.png" alt="clear"></button>
+		</div>
+		<div class="row top15">
+			<div class="col-md-8 text-center">
+				<canvas id="myCanvas" resize></canvas>
+			</div>
+			<div class="col-md-4">
+				<div id='chatroom'>
+        			<div class="chat-box" id='chat-box'>
+          			<h4>Live Chat!</h4>
+        			</div>
+        			<form id="chat-submit">
+          				<input class="form-control" id="chat-input">
+        			</form>
+      			</div>
+			</div>
+		</div>
+	</div>
 
 
 </body>
+
+
 	<script type="text/paperscript" canvas="myCanvas">
 
+	$(document).ready(function() {
+		$("#title").lettering();
+	});
+
+	var socket = io.connect();
+	var user;
+
+	alertify.set({ buttonReverse: true });
+
+	alertify.prompt("Welcome to DrawingTogether", function (e, str) {
+    // str is the input text
+	    if (e) {
+	    	if(str == ''){
+	    		user = "Guest";
+	    	} else {
+	        user = str;
+	    }
+	    } else {
+	        user = "Guest"
+	    }
+	}, "Enter Your Name!");
+
+	var user = "hi";
+
+//chat
+	$('#chat-submit').submit(function(){
+
+		var message = user + ": " + $('#chat-input').val();
+
+		socket.emit("send-chat", {message: message});
+		$('#chat-input').val('');
+		return false;
+    })
+
+	socket.on('chat-sent', function (message){
+		$('#chat-box').append($('<p>').text(message.message));
+		$('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+    })
+
+
+
+
+//drawingboard
 
 	//setting up variables
-	var socket = io.connect();
 	var myPath;
 	var picked_color;
 	var picked_width;
 	$("#color").val('000000')
 	var currentMode = "drawing";
 	
-
-	
-
-
-	
-
 	//setting up initial conditions
 	if(currentMode == "drawing"){
 		$('#myCanvas').css('cursor', 'url(/img/pen.png),auto');
@@ -60,15 +125,6 @@
 		currentMode="erasing";
 		$('#myCanvas').css('cursor', 'url(/img/eraser.png),auto');
 	})
-
-
-
-
-
-
-
-
-
 
 	//listening for events
     socket.on("gotClear", function(clear){
@@ -96,9 +152,7 @@
     });
 
     socket.on("gotSerial", function(ser){
-    	// console.log(ser)
     	var raster = new Raster(ser, view.center);
-    	
     })
 
     socket.on("gotLoad", function(){
@@ -106,20 +160,8 @@
     	socket.emit("onSerial", serial);
     })
 
-
-
-
-
-
-
-
-
-
-
-
-
     //emitting event
-    socket.emit("onPreload");
+	socket.emit("onPreload");
 
 	$("#clear").click(function(){
 		socket.emit("clearingScreen");

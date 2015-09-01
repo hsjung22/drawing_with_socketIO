@@ -1,5 +1,120 @@
+
+/*canvas*/
 #myCanvas{
 	border: 2px solid black;
-	height: 600px;
-	width: 700px;
+	height: 500px;
+	width: 600px;
+}
+.top15{
+	margin-top: 15px;
+}
+#range{
+	width: 152px;
+}
+
+
+/*chat*/
+.chat-box{
+	border-radius: 20px;
+	border: 1.7px solid darkgrey;
+	height: 451px;
+	background-color: lightyellow;
+	margin-bottom: 10px;
+	overflow: scroll;
+	padding-left: 15px;
+	width: 100%;
+}
+
+
+/*title*/
+#title .char1{
+	top: -7px;
+	color: #d11141;
+    -webkit-transform: rotate(-12deg);
+}
+#title .char2{
+	top: 7px;
+	color: #00b159;
+    -webkit-transform: rotate(2deg);
+}
+#title .char3{
+	top: 0px;
+	color: #00aedb;
+    -webkit-transform: rotate(12deg);
+}
+#title .char4{
+	top: 11px;
+	color: #f37735;
+    -webkit-transform: rotate(-15deg);
+}
+#title .char5{
+	top: -17px;
+	color: #ffc425;
+    -webkit-transform: rotate(-2deg);
+}
+#title .char6{
+	top: -7px;
+	color: #00aedb;
+    -webkit-transform: rotate(-5deg);
+}
+#title .char7{
+	top: 11px;
+	color: #a200ff;
+    -webkit-transform: rotate(8deg);
+}
+#title .char8{
+	top: 0px;
+	color: #f47835;
+    -webkit-transform: rotate(16deg);
+}
+#title .char9{
+	top: 10px;
+	color: #d41243;
+    -webkit-transform: rotate(-2deg);
+}
+#title .char10{
+	top: -7px;
+	color: #ffc425;
+    -webkit-transform: rotate(-10deg);
+}
+#title .char11{
+	top: 0px;
+	color: #00aedb;
+    -webkit-transform: rotate(2deg);
+}
+#title .char12{
+	top: -17px;
+	color: #00b159;
+    -webkit-transform: rotate(2deg);
+}
+#title .char13{
+	top: 10px;
+	color: #d11141;
+    -webkit-transform: rotate(-8deg);
+}
+#title .char14{
+	top: -7px;
+	color: #00aedb;
+    -webkit-transform: rotate(2deg);
+}
+#title .char15{
+	top: 0px;
+	color: #f37735;
+    -webkit-transform: rotate(2deg);
+}
+#title .char16{
+	top: -20px;
+	color: #d11141;
+    -webkit-transform: rotate(15deg);
+}
+
+
+#title span{
+	font-family: 'Luckiest Guy', cursive;
+	text-shadow: 3px 3px grey;
+	font-size: 1.7em;
+	display: inline-block;
+    position: relative;
+    letter-spacing: 10px;
+    -webkit-transition: all 0.2s ease-out;
 }
